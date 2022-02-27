@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Books</title>
+    <style>
+        body{
+            background: url('https://c4.wallpaperflare.com/wallpaper/187/1002/409/dark-minimalism-vehicle-aircraft-wallpaper-preview.jpg');
+        }
+        .back_btn{
+            margin-left: -50%;
+            box-shadow: 2px 2px 2px 1px #000000;
+        }        
+        .buttons-csv{
+            background: bisque !important;
+            box-shadow: 2px 2px 2px 1px #000000;
+            width: 100% !important;
+        }
+        .card, .modal-content{
+            background-color: #0d5e44!important;
+        }
+        label{
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container text-center p-5">
+        <div class="card p-3 bg-secondary mt-5 text-center w-75">
+            <div class="row mb-4">
+                <div class="col-md-4 p-1">
+                    <a href="{% url 'author_list' %}" class="btn btn-primary font-weight-bold text-decoration-none back_btn"><i class="fa fa-arrow-left"></i>&nbsp; Author List</a>
+                </div>
+                <div class="col-md-4">
+                    <h1 class="text-center text-white">Books List</h1>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <span class="text-right pull-right">
+                        <button class="bt btn-info" data-toggle="modal" data-target="#book_csv">Import CSV</button>
+                        <button class="bt btn-primary" data-toggle="modal" data-target="#books_create">Create Book
+                        </button>
+                    </span>
+                </div>
+            </div>
+            {% if messages %}
+                <ul class="messages list-unstyled">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }} p-2 font-weight-bold text-center" {% endif %}>
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <table class="table" id="table_id">
+                <colgroup>
+                    <col style="width: 20px;">
+                    <col style="width: 70px;">
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                  </colgroup>
+                <thead>
+                    <tr>
+                        <th>S.no</th>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Publish Date</th>
+                        <th>Pages</th>
+                        <th>critics rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr class="text-white" style="background-color: #0d5e44!important;">
+                        <td>{{forloop.counter}}</td>
+                        <th>{{book.name}}</th>
+                        <th>{{book.author}}</th>
+                        <td>{{book.date_publishing|date:'d-m-Y'}}</td>
+                        <td>{{book.number_of_pages}}</td>
+                        <td>{{book.avg_critics_rating}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="books_create" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content p-3">
+                <div class="modal-header text-white">
+                    <h4 class="modal-title text-center">Create Book Here</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body p-3">
+                    <form action="{% url 'book_create' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
+                                <label>Name</label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="">Author</label>
+                                <select name="author" class="form-control" required>
+                                    <option value="">Please select</option>
+                                    {% for author in authors %}
+                                        <option value="{{author.id}}">{{author.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="">Date of Publishing</label>
+                                <input type="date" name="date_publishing" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="">Number of Pages</label>
+                                <input type="text" name="number_of_pages" class="form-control" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="">Average Critics rating</label>
+                                <input type="text" name="avg_critics_rating" class="form-control" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" maxlength="2" min="1" required>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-right mt-3">
+                            <input type="submit" value="CREATE" class="btn btn-info btn-sm text-dark font-weight-bold w-100">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="book_csv" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content p-3">
+                <div class="modal-header text-white">
+                    <h4 class="modal-title text-center">Import CSV for Books</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body p-3">
+                    {% if messages %}
+                        <ul class="messages list-unstyled">
+                            {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }} p-2 font-weight-bold text-center" {% endif %}>
+                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                                    {{ message }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <form action="{% url 'book_csv' %}" method="POST" enctype="multipart/form-data" class="p-5 text-center">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="file" name='books_csv' class="btn btn-info" required/>
+                        </div>
+                        <hr>
+                        <input type="submit" value="Import" class="btn btn-info btn-sm text-dark font-weight-bold w-100">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#searchTheKey").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#ul_id div p").filter(function () {
+                    if ($(this).text().toLowerCase().indexOf(value) == -1) {
+                        $(this).parent().parent().parent().parent().addClass('inactive');
+                        $(this).parent().parent().parent().parent().removeClass('active');
+                        $(".inactive").hide();
+                    }
+                    else {
+                        $(this).parent().parent().parent().parent().addClass('active');
+                        $(this).parent().parent().parent().parent().removeClass('inactive');
+                        $('.active').show();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.1.0/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/datetime/1.1.1/js/dataTables.dateTime.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+
+    <script>
+        $(document).ready(() => {
+            var date_obj = new Date();
+            $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            "aLengthMenu": [[5, 10, 25, -1], [5, 10, 25, "All"]],
+            buttons: [
+                {
+                    extend: 'csvHtml5',
+                    text: 'Export CSV',
+                    exportOptions: {
+                        columns: [ 1, 2, 3, 4, 5 ]
+                    },
+                    title: `Books_list_${date_obj.getDate()}_${date_obj.getMonth()+1}_${date_obj.getFullYear()}`
+                },
+            ]
+        });
+    });
+    </script>
+
+</body>
+
+</html>
