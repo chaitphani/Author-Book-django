@@ -29,34 +29,46 @@
     Note: x is assumed as tank capacity
  
 
-4. 20P = Rs.100
+4. 20P @ Rs.100
+    
+        let no. of BP bought = n
 
-    a. 1/3rd of P is GP -> 7P as gray he bought.
+        no. of GP = n/3
 
-        BP = 2*GP (twice gray as black)
+        n+(n/3) = 20
 
-        if 7P as gray pencils then 13P as black pencils
+        (3n+n)/3=20 => n=15
 
-        => let us assume x as BP and y as GP
+    a. GP he bought = 5P
         
-        => y = 2x
-        13x + 7y = 100
-        13x + 7(2x) = 100
-
-    b. price of BP(x) = 3.70
+        let price of BP = x and GP = 2x
         
-        price of GP(y) = 7.40
-
-
+        5*2x + 15*x = 100
+        
+        x = 100/25 => 4
+        
+    b. price of GP = Rs.8
+    
     # (**P refers to Pencil)
     # (**BP refers to Black Pencil)
     # (**GP refers to Gray Pencil)
 
 
-5. TS = 76
-
-    E&M = 22
-
-    H&M = 23
-
-    so E&H = 76 - (22+23) = 31 students
+5. no. of students = 76 i.e., n(E U H U M)
+    
+    n(E) = 53, n(H) = 46, n(M) = 39
+    
+    n(E n H n M) = 15, n(E n M) = 22, n(H n M) = 23
+    
+    n(E U H U M) = n(E)+n(H)+n(M) - n(E n H)- n(H n M) - n(E n M) + n(E n H n M)
+    
+    76 = 53 + 46 + 39 - n(E n H) - 23 - 22 + 15
+    
+    n(E n H) = 108 - 76
+    
+    no. of students who speak both E and H are 32
+    
+    # English -> E
+    # Hindi -> H
+    # Marathi -> M
+    # Union -> U
