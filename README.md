@@ -1,6 +1,6 @@
 # Author-Book-django
 
-# simple steps to make the surver run  locally:
+# simple steps to make the server run  locally:
 
 Create a virtual environment after cloning the project and activate the same.
 
